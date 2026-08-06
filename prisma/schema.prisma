@@ -1,0 +1,23 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model HolyCardRecord {
+  id          String   @id @default(cuid())
+  userName    String   // 濉啓浜哄鍚?  cardName    String   // 鍦ｇ墝鍚嶇О
+  status      String   // "澶氬嚭鏉? 鎴?"缂哄皯"
+  quantity    Int      @default(1) // 鏁伴噺
+  notes       String?  // 澶囨敞
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("holy_card_records")
+}
