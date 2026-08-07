@@ -19,8 +19,8 @@ export default function HolyCardList({ records, isLoading }: HolyCardListProps) 
   if (isLoading) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">鎵€鏈夊～鍐欒褰?/h2>
-        <div className="text-center py-8">鍔犺浇涓?..</div>
+        <h2 className="text-xl font-semibold mb-4">所有填写记录</h2>
+        <div className="text-center py-8">加载中...</div>
       </div>
     )
   }
@@ -28,37 +28,39 @@ export default function HolyCardList({ records, isLoading }: HolyCardListProps) 
   if (records.length === 0) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">鎵€鏈夊～鍐欒褰?/h2>
+        <h2 className="text-xl font-semibold mb-4">所有填写记录</h2>
         <div className="text-center py-8 text-gray-500">
-          鏆傛棤璁板綍锛岃鍏堟坊鍔犲湥鐗屼俊鎭?        </div>
+          暂无记录，请先添加圣牌信息
+        </div>
       </div>
     )
   }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">鎵€鏈夊～鍐欒褰?/h2>
+      <h2 className="text-xl font-semibold mb-4">所有填写记录</h2>
       
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                濮撳悕
+                姓名
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                鍦ｇ墝鍚嶇О
+                圣牌名称
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                鐘舵€?              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                鏁伴噺
+                状态
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                澶囨敞
+                数量
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                鏃堕棿
+                备注
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                时间
               </th>
             </tr>
           </thead>
@@ -74,7 +76,7 @@ export default function HolyCardList({ records, isLoading }: HolyCardListProps) 
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <span
                     className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      record.status === '澶氬嚭鏉?
+                      record.status === '多出来'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
                     }`}
