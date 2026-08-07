@@ -3,10 +3,10 @@ import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
 const recordSchema = z.object({
-  userName: z.string().min(1, '濮撳悕涓嶈兘涓虹┖'),
-  cardName: z.string().min(1, '鍦ｇ墝鍚嶇О涓嶈兘涓虹┖'),
-  status: z.enum(['澶氬嚭鏉?, '缂哄皯']),
-  quantity: z.number().int().positive('鏁伴噺蹇呴』涓烘鏁存暟'),
+  userName: z.string().min(1, '姓名不能为空'),
+  cardName: z.string().min(1, '圣牌名称不能为空'),
+  status: z.enum(['多出来', '缺少']),
+  quantity: z.number().int().positive('数量必须为正整数'),
   notes: z.string().optional(),
 })
 
@@ -17,9 +17,9 @@ export async function GET() {
     })
     return NextResponse.json(records)
   } catch (error) {
-    console.error('鑾峰彇璁板綍澶辫触:', error)
+    console.error('获取记录失败:', error)
     return NextResponse.json(
-      { error: '鑾峰彇璁板綍澶辫触' },
+      { error: '获取记录失败' },
       { status: 500 }
     )
   }
@@ -38,14 +38,14 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: '鏁版嵁楠岃瘉澶辫触', details: error.errors },
+        { error: '数据验证失败', details: error.errors },
         { status: 400 }
       )
     }
 
-    console.error('鍒涘缓璁板綍澶辫触:', error)
+    console.error('创建记录失败:', error)
     return NextResponse.json(
-      { error: '鍒涘缓璁板綍澶辫触' },
+      { error: '创建记录失败' },
       { status: 500 }
     )
   }
