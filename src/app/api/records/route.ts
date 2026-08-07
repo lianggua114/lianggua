@@ -2,34 +2,33 @@ import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { z } from 'zod'
 
-const recordSchema = z.object({
+const scheduleSchema = z.object({
   userName: z.string().min(1, '姓名不能为空'),
-  cardName: z.string().min(1, '圣牌名称不能为空'),
-  status: z.enum(['多出来', '缺少']),
-  quantity: z.number().int().positive('数量必须为正整数'),
-  notes: z.string().optional(),
+  date: z.string().min(1, '日期不能为空'),
+  timeSlot: z.enum(['morning', 'afternoon', 'evening']),
 })
 
 export async function GET() {
   try {
     const { data, error } = await supabase
-      .from('holy_card_records')
+      .from('schedule_slots')
       .select('*')
-      .order('created_at', { ascending: false })
+      .order('slot_date', { ascending: true })
+      .order('slot_time', { ascending: true })
 
     if (error) {
-      console.error('获取记录失败:', error)
+      console.error('获取排班失败:', error)
       return NextResponse.json(
-        { error: '获取记录失败' },
+        { error: '获取排班失败' },
         { status: 500 }
       )
     }
 
     return NextResponse.json(data)
   } catch (error) {
-    console.error('获取记录失败:', error)
+    console.error('获取排班失败:', error)
     return NextResponse.json(
-      { error: '获取记录失败' },
+      { error: '获取排班失败' },
       { status: 500 }
     )
   }
@@ -38,23 +37,37 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const validatedData = recordSchema.parse(body)
+    const validatedData = scheduleSchema.parse(body)
 
+    // 检查时间段是否已被占用
+    const { data: existing, error: checkError } = await supabase
+      .from('schedule_slots')
+      .select('id')
+      .eq('slot_date', validatedData.date)
+      .eq('slot_time', validatedData.timeSlot)
+      .single()
+
+    if (existing) {
+      return NextResponse.json(
+        { error: '该时间段已被其他人选择' },
+        { status: 409 }
+      )
+    }
+
+    // 创建新预约
     const { data, error } = await supabase
-      .from('holy_card_records')
+      .from('schedule_slots')
       .insert([{
         user_name: validatedData.userName,
-        card_name: validatedData.cardName,
-        status: validatedData.status,
-        quantity: validatedData.quantity,
-        notes: validatedData.notes || null,
+        slot_date: validatedData.date,
+        slot_time: validatedData.timeSlot,
       }])
       .select()
 
     if (error) {
-      console.error('创建记录失败:', error)
+      console.error('创建排班失败:', error)
       return NextResponse.json(
-        { error: '创建记录失败' },
+        { error: '创建排班失败' },
         { status: 500 }
       )
     }
@@ -68,9 +81,9 @@ export async function POST(request: Request) {
       )
     }
 
-    console.error('创建记录失败:', error)
+    console.error('创建排班失败:', error)
     return NextResponse.json(
-      { error: '创建记录失败' },
+      { error: '创建排班失败' },
       { status: 500 }
     )
   }
