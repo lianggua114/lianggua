@@ -23,7 +23,6 @@ const timeSlots = [
 
 export default function ScheduleCalendar({ schedules, onBook }: ScheduleCalendarProps) {
   const [userName, setUserName] = useState('')
-  const [selectedDate, setSelectedDate] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
