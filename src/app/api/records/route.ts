@@ -8,6 +8,11 @@ const scheduleSchema = z.object({
   timeSlot: z.enum(['morning', 'afternoon', 'evening']),
 })
 
+const statusSchema = z.object({
+  id: z.string().min(1, 'ID不能为空'),
+  status: z.enum(['pending', 'in_progress', 'completed', 'overdue']),
+})
+
 export async function GET() {
   try {
     const { data, error } = await supabase
@@ -61,6 +66,7 @@ export async function POST(request: Request) {
         user_name: validatedData.userName,
         slot_date: validatedData.date,
         slot_time: validatedData.timeSlot,
+        status: 'pending',
       }])
       .select()
 
@@ -84,6 +90,55 @@ export async function POST(request: Request) {
     console.error('创建排班失败:', error)
     return NextResponse.json(
       { error: '创建排班失败' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json()
+    const validatedData = statusSchema.parse(body)
+
+    // 更新状态
+    const updateData: any = { status: validatedData.status }
+
+    // 如果状态变为 in_progress，记录开始时间
+    if (validatedData.status === 'in_progress') {
+      updateData.started_at = new Date().toISOString()
+    }
+
+    // 如果状态变为 completed，记录完成时间
+    if (validatedData.status === 'completed') {
+      updateData.completed_at = new Date().toISOString()
+    }
+
+    const { data, error } = await supabase
+      .from('schedule_slots')
+      .update(updateData)
+      .eq('id', validatedData.id)
+      .select()
+
+    if (error) {
+      console.error('更新状态失败:', error)
+      return NextResponse.json(
+        { error: '更新状态失败' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(data[0])
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: '数据验证失败', details: error.errors },
+        { status: 400 }
+      )
+    }
+
+    console.error('更新状态失败:', error)
+    return NextResponse.json(
+      { error: '更新状态失败' },
       { status: 500 }
     )
   }
