@@ -5,8 +5,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: '鍦ｇ墝绠＄悊绯荤粺',
-  description: '璁板綍姣忎釜浜哄鍑烘潵鍜岀己灏戠殑鍦ｇ墝',
+  title: '圣牌管理系统',
+  description: '记录每个人多出来和缺少的圣牌',
 }
 
 export default function RootLayout({
