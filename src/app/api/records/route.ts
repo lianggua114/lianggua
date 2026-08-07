@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { supabase } from '@/lib/supabase'
 import { z } from 'zod'
 
 const recordSchema = z.object({
@@ -12,10 +12,20 @@ const recordSchema = z.object({
 
 export async function GET() {
   try {
-    const records = await prisma.holyCardRecord.findMany({
-      orderBy: { createdAt: 'desc' },
-    })
-    return NextResponse.json(records)
+    const { data, error } = await supabase
+      .from('holy_card_records')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('获取记录失败:', error)
+      return NextResponse.json(
+        { error: '获取记录失败' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(data)
   } catch (error) {
     console.error('获取记录失败:', error)
     return NextResponse.json(
@@ -30,11 +40,26 @@ export async function POST(request: Request) {
     const body = await request.json()
     const validatedData = recordSchema.parse(body)
 
-    const record = await prisma.holyCardRecord.create({
-      data: validatedData,
-    })
+    const { data, error } = await supabase
+      .from('holy_card_records')
+      .insert([{
+        user_name: validatedData.userName,
+        card_name: validatedData.cardName,
+        status: validatedData.status,
+        quantity: validatedData.quantity,
+        notes: validatedData.notes || null,
+      }])
+      .select()
 
-    return NextResponse.json(record, { status: 201 })
+    if (error) {
+      console.error('创建记录失败:', error)
+      return NextResponse.json(
+        { error: '创建记录失败' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(data[0], { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
