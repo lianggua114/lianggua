@@ -8,6 +8,9 @@ interface ScheduleSlot {
   user_name: string
   slot_date: string
   slot_time: string
+  status: string
+  started_at: string | null
+  completed_at: string | null
   created_at: string
 }
 
@@ -54,6 +57,24 @@ export default function Home() {
     await fetchSchedules()
   }
 
+  const handleUpdateStatus = async (id: string, status: string) => {
+    const response = await fetch('/api/records', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id, status }),
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || '状态更新失败')
+    }
+
+    // 刷新排班列表
+    await fetchSchedules()
+  }
+
   if (isLoading) {
     return (
       <main className="min-h-screen bg-gray-100 py-8">
@@ -79,13 +100,14 @@ export default function Home() {
 
         <ScheduleCalendar 
           schedules={schedules} 
-          onBook={handleBook} 
+          onBook={handleBook}
+          onUpdateStatus={handleUpdateStatus}
         />
 
         {/* 统计信息 */}
         <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold mb-2">排班统计</h3>
-          <div className="grid grid-cols-3 gap-4 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
               <div className="text-2xl font-bold text-blue-600">{schedules.length}</div>
               <div className="text-sm text-gray-500">总预约数</div>
@@ -97,10 +119,16 @@ export default function Home() {
               <div className="text-sm text-gray-500">参与人数</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-purple-600">
-                {new Set(schedules.map(s => s.slot_date)).size}
+              <div className="text-2xl font-bold text-yellow-600">
+                {schedules.filter(s => s.status === 'in_progress').length}
               </div>
-              <div className="text-sm text-gray-500">已排班天数</div>
+              <div className="text-sm text-gray-500">进行中</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-purple-600">
+                {schedules.filter(s => s.status === 'completed').length}
+              </div>
+              <div className="text-sm text-gray-500">已完成</div>
             </div>
           </div>
         </div>
