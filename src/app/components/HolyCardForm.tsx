@@ -5,7 +5,7 @@ import { useState } from 'react'
 interface FormData {
   userName: string
   cardName: string
-  status: '澶氬嚭鏉? | '缂哄皯'
+  status: '多出来' | '缺少'
   quantity: number
   notes: string
 }
@@ -18,7 +18,7 @@ export default function HolyCardForm({ onSubmit }: HolyCardFormProps) {
   const [formData, setFormData] = useState<FormData>({
     userName: '',
     cardName: '',
-    status: '缂哄皯',
+    status: '缺少',
     quantity: 1,
     notes: '',
   })
@@ -35,12 +35,12 @@ export default function HolyCardForm({ onSubmit }: HolyCardFormProps) {
       setFormData({
         userName: '',
         cardName: '',
-        status: '缂哄皯',
+        status: '缺少',
         quantity: 1,
         notes: '',
       })
     } catch (err) {
-      setError(err instanceof Error ? err.message : '鎻愪氦澶辫触')
+      setError(err instanceof Error ? err.message : '提交失败')
     } finally {
       setIsSubmitting(false)
     }
@@ -48,7 +48,7 @@ export default function HolyCardForm({ onSubmit }: HolyCardFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">娣诲姞鍦ｇ墝璁板綍</h2>
+      <h2 className="text-xl font-semibold mb-4">添加圣牌记录</h2>
       
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -59,7 +59,7 @@ export default function HolyCardForm({ onSubmit }: HolyCardFormProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            濮撳悕 *
+            姓名 *
           </label>
           <input
             type="text"
@@ -73,7 +73,7 @@ export default function HolyCardForm({ onSubmit }: HolyCardFormProps) {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            鍦ｇ墝鍚嶇О *
+            圣牌名称 *
           </label>
           <input
             type="text"
@@ -87,22 +87,22 @@ export default function HolyCardForm({ onSubmit }: HolyCardFormProps) {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            鐘舵€?*
+            状态 *
           </label>
           <select
             value={formData.status}
-            onChange={(e) => setFormData({ ...formData, status: e.target.value as '澶氬嚭鏉? | '缂哄皯' })}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value as '多出来' | '缺少' })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isSubmitting}
           >
-            <option value="缂哄皯">缂哄皯</option>
-            <option value="澶氬嚭鏉?>澶氬嚭鏉?/option>
+            <option value="缺少">缺少</option>
+            <option value="多出来">多出来</option>
           </select>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            鏁伴噺 *
+            数量 *
           </label>
           <input
             type="number"
@@ -117,7 +117,7 @@ export default function HolyCardForm({ onSubmit }: HolyCardFormProps) {
 
         <div className="md:col-span-2">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            澶囨敞
+            备注
           </label>
           <textarea
             value={formData.notes}
@@ -134,7 +134,7 @@ export default function HolyCardForm({ onSubmit }: HolyCardFormProps) {
         disabled={isSubmitting}
         className="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isSubmitting ? '鎻愪氦涓?..' : '鎻愪氦'}
+        {isSubmitting ? '提交中...' : '提交'}
       </button>
     </form>
   )
