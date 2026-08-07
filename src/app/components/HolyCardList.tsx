@@ -2,12 +2,12 @@
 
 interface HolyCardRecord {
   id: string
-  userName: string
-  cardName: string
+  user_name: string
+  card_name: string
   status: string
   quantity: number
   notes: string | null
-  createdAt: string
+  created_at: string
 }
 
 interface HolyCardListProps {
@@ -68,10 +68,10 @@ export default function HolyCardList({ records, isLoading }: HolyCardListProps) 
             {records.map((record) => (
               <tr key={record.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {record.userName}
+                  {record.user_name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {record.cardName}
+                  {record.card_name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <span
@@ -91,7 +91,7 @@ export default function HolyCardList({ records, isLoading }: HolyCardListProps) 
                   {record.notes || '-'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(record.createdAt).toLocaleString('zh-CN')}
+                  {new Date(record.created_at).toLocaleString('zh-CN')}
                 </td>
               </tr>
             ))}
