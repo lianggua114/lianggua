@@ -24,12 +24,12 @@ export default function Home() {
       setIsLoading(true)
       const response = await fetch('/api/records')
       if (!response.ok) {
-        throw new Error('鑾峰彇璁板綍澶辫触')
+        throw new Error('获取记录失败')
       }
       const data = await response.json()
       setRecords(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : '鑾峰彇璁板綍澶辫触')
+      setError(err instanceof Error ? err.message : '获取记录失败')
     } finally {
       setIsLoading(false)
     }
@@ -42,7 +42,7 @@ export default function Home() {
   const handleSubmit = async (formData: {
     userName: string
     cardName: string
-    status: '澶氬嚭鏉? | '缂哄皯'
+    status: '多出来' | '缺少'
     quantity: number
     notes: string
   }) => {
@@ -56,10 +56,10 @@ export default function Home() {
 
     if (!response.ok) {
       const errorData = await response.json()
-      throw new Error(errorData.error || '鎻愪氦澶辫触')
+      throw new Error(errorData.error || '提交失败')
     }
 
-    // 鍒锋柊璁板綍鍒楄〃
+    // 刷新记录列表
     await fetchRecords()
   }
 
@@ -67,7 +67,7 @@ export default function Home() {
     <main className="min-h-screen bg-gray-100 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          鍦ｇ墝绠＄悊绯荤粺
+          圣牌管理系统
         </h1>
         
         {error && (
