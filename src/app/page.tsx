@@ -6,12 +6,12 @@ import HolyCardList from './components/HolyCardList'
 
 interface HolyCardRecord {
   id: string
-  userName: string
-  cardName: string
+  user_name: string
+  card_name: string
   status: string
   quantity: number
   notes: string | null
-  createdAt: string
+  created_at: string
 }
 
 export default function Home() {
